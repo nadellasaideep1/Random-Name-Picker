@@ -9,9 +9,10 @@ $("#pick").click(function() {
     localStorage.setItem("mylastdata",names)
   }
   // Seperate the names and push them into the array
-  var nameArray = names.split(',');
+  var nameArray = names.split(',').filter(nameArray => nameArray.trim() !== '').map(nameArray => nameArray.trim());
   console.log(nameArray)
   // Get a random name, the winner
+  if(nameArray.length>0){
 var winner = nameArray[Math.floor(Math.random()*nameArray.length)];
   varwinnertocut=winner
   winner = "🎉" + " " + winner + " "
@@ -25,6 +26,10 @@ document.getElementById('names').value=nameArray
   $("#winner").addClass("open");
   $("#close").addClass("open");
   $("#winner").text(winner);
+}
+else{
+  alert("Please enter some Names...")
+}
 });
   
 $("#close").click(function() {
@@ -41,7 +46,7 @@ $("#close").click(function() {
 
   COLORS = [[85, 71, 106], [174, 61, 99], [219, 56, 83], [244, 92, 68], [248, 182, 70]];
 
-  PI_2 = 2 * Math.PI;
+  PI_2 = 2 * Math.PI; 
 
   canvas = document.getElementById("world");
 
