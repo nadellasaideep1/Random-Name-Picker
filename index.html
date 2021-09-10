@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Random Name Picker-Saideep</title>
@@ -9,51 +8,30 @@
 		<meta name="description" content="Random Name Picker">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="./style.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	</head>
-	<body>
-
-		<div class="container">
-			<h3>
-				Enter all of the choices divided by a comma (','). <br />
-				Click enter when you're done!!
-			</h3>
-			<textarea id="textarea" placeholder="Enter names here..."></textarea>	
-			<div id="tags"></div>
-		</div><br><br>
-		<div class="social-panel-container">
-			<div class="social-panel">
-				<p>Created with <i class="fa fa-heart"></i> by
-					<a target="_blank" href="https://nadellasaideep1.github.io/myportfolio/">Saideep Nadella</a></p>
-				<button class="close-btn"><i class="fas fa-times"></i></button><br>
-						<h4>View my Profiles at</h4>
-				<ul>
-					<li>
-						<a href="https://thoughtfulsaideep.wordpress.com/" target="_blank">
-							<i class="fab fa-wordpress"></i>
-						</a>
-					</li>
-					<li>
-						<a href="https://www.chess.com/member/nadellasaideeppro" target="_blank">
-							<i class="fas fa-chess"></i>
-						</a>
-					</li>
-					<li>
-						<a href="https://github.com/nadellasaideep1" target="_blank">
-							<i class="fab fa-github"></i>
-						</a>
-					</li>
-					<li>
-						<a href="https://codepen.io/nadellasaideep1" target="_blank">
-							<i class="fab fa-codepen"></i>
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<button class="floating-btn">
-			Get in Touch
-		</button>
-		
+	<body onload="alertloaded()">
+		<div class="overlay">
+			<canvas id="world"></canvas>
+			<h1 id="winner"></h1>
+			<svg id="close" aria-hidden="true" data-prefix="far" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="svg-inline--fa fa-times fa-w-10 fa-3x"><path fill="white" d="M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z" class=""></path></svg>
+		  </div>
+		  
+		  <div class="background">
+			<nav>
+			  <div class="navWrapper">
+				<a href="#">RANDOM NAME PICKER-By Saideep❤</a>
+			  </div>
+			</nav>
+			
+			<header>
+			  <div class="namepicker">
+				<p>Names:</p>
+				<input id="names" onchange="datachange()" type="text" placeholder="Each name followed by a ‘ , ‘">
+				<a href="#" id="pick">Pick a name</a>
+			  </div>
+			</header>
+		  </div>
 		<script src="./script.js"></script>
 	</body>
 </html>
