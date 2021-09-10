@@ -150,7 +150,7 @@ $("#close").click(function() {
 
 }).call(this);
 function datachange(){
-  varfirsttime=true
+  localStorage.setItem("mylastdata",document.getElementById("names").value)
 }
 window.onload = function() {
   document.getElementById("names").value = localStorage.getItem("mylastdata");
