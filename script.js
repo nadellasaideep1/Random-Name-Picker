@@ -1,235 +1,157 @@
-const tagsEl = document.getElementById('tags');
-const textarea = document.getElementById('textarea');
-
-// focus by default
-textarea.focus();
-
-textarea.addEventListener('keyup', (e) => {
-	// create a tag for all the inputs separated by a comma
-	createTags(e.target.value);
-	
-	// check if the enter key is pressed
-	if(e.key === 'Enter') {
-		// empty textarea
-		// used setTimeout to add a little delay in order to clean the input
-		setTimeout(() => {
-			e.target.value = '';
-		}, 10)
-		
-		// start randomizer
-		randomSelect();
-	}
-	
+var nameArray = [];
+var varfirsttime=true
+var varwinnertocut;
+$("#pick").click(function() {
+    // Get the input value
+  var names = document.getElementById("names").value;
+  if(varfirsttime==true){
+    varfirsttime=false;
+    localStorage.setItem("mylastdata",names)
+  }
+  // Seperate the names and push them into the array
+  var nameArray = names.split(',');
+  console.log(nameArray)
+  // Get a random name, the winner
+var winner = nameArray[Math.floor(Math.random()*nameArray.length)];
+  varwinnertocut=winner
+  winner = "🎉" + " " + winner + " "
+var myFilteredArray= nameArray.indexOf(varwinnertocut);
+if (myFilteredArray !== -1) {
+    nameArray.splice(myFilteredArray, 1);
+}
+document.getElementById('names').value=nameArray
+  // Display winner
+  $("#world").addClass("open");
+  $("#winner").addClass("open");
+  $("#close").addClass("open");
+  $("#winner").text(winner);
+});
+  
+$("#close").click(function() {
+  $("#world").removeClass("open");
+  $("#winner").removeClass("open");
+  $("#close").removeClass("open");
 });
 
-function createTags(input) {
-	const tags = input.split(',').filter(tag => tag.trim() !== '').map(tag => tag.trim());
-	console.log(tags)
-	// clean up the tags first
-	tagsEl.innerHTML = '';
-	
-	// map over the tags and add them to the tagsEl container
-	tags.forEach(tag => {
-		const tagEl = document.createElement('span');
-		tagEl.classList.add('tag');
-		tagEl.innerText = tag;
-		tagsEl.appendChild(tagEl);
-	})
-}
+// Confetti
+(function() {
+  var COLORS, Confetti, NUM_CONFETTI, PI_2, canvas, confetti, context, drawCircle, i, range, resizeWindow, xpos;
 
-function randomSelect() {
-	const times = 30;
-	
-	const interval = setInterval(() => {
-		const randomTag = pickRandomTag();
-		
-		highlightTag(randomTag);
-		
-		// remove the highlight after a while
-		setTimeout(() => {
-			unhighlightTag(randomTag);
-		}, 100);
-	}, 100);
-	
-	// allow times * 100 ms for the tags to randomly "highlight" themselves
-	// then pick another tag
-	setTimeout(() => {
-		clearInterval(interval);
-		
-		setTimeout(() => {
-			const randomTag = pickRandomTag();
-			
-			highlightTag(randomTag)
-		}, 100);
-	}, times * 100);
-	const confetti = document.getElementById('confetti');
-const confettiCtx = confetti.getContext('2d');
-let container, confettiElements = [], clickPosition;
+  NUM_CONFETTI = 350;
 
-// helper
-rand = (min, max) => Math.random() * (max - min) + min;
+  COLORS = [[85, 71, 106], [174, 61, 99], [219, 56, 83], [244, 92, 68], [248, 182, 70]];
 
-// params to play with
-const confettiParams = {
-    // number of confetti per "explosion"
-    number: 70,
-    // min and max size for each rectangle
-    size: { x: [5, 20], y: [10, 18] },
-    // power of explosion
-    initSpeed: 25,
-    // defines how fast particles go down after blast-off
-    gravity: 0.65,
-    // how wide is explosion
-    drag: 0.08,
-    // how slow particles are falling
-    terminalVelocity: 6,
-    // how fast particles are rotating around themselves
-    flipSpeed: 0.017,
-};
-const colors = [
-    { front : '#3B870A', back: '#235106' },
-    { front : '#B96300', back: '#6f3b00' },
-    { front : '#E23D34', back: '#88251f' },
-    { front : '#CD3168', back: '#7b1d3e' },
-    { front : '#664E8B', back: '#3d2f53' },
-    { front : '#394F78', back: '#222f48' },
-    { front : '#008A8A', back: '#005353' },
-];
+  PI_2 = 2 * Math.PI;
 
-setupCanvas();
-updateConfetti();
+  canvas = document.getElementById("world");
 
-confetti.addEventListener('click', addConfetti);
-window.addEventListener('resize', () => {
-    setupCanvas();
-    hideConfetti();
-});
+  context = canvas.getContext("2d");
 
-// Confetti constructor
-function Conf() {
-    this.randomModifier = rand(-1, 1);
-    this.colorPair = colors[Math.floor(rand(0, colors.length))];
-    this.dimensions = {
-        x: rand(confettiParams.size.x[0], confettiParams.size.x[1]),
-        y: rand(confettiParams.size.y[0], confettiParams.size.y[1]),
+  window.w = 0;
+
+  window.h = 0;
+
+  resizeWindow = function() {
+    window.w = canvas.width = window.innerWidth;
+    return window.h = canvas.height = window.innerHeight;
+  };
+
+  window.addEventListener('resize', resizeWindow, false);
+
+  window.onload = function() {
+    return setTimeout(resizeWindow, 0);
+  };
+
+  range = function(a, b) {
+    return (b - a) * Math.random() + a;
+  };
+
+  drawCircle = function(x, y, r, style) {
+    context.beginPath();
+    context.arc(x, y, r, 0, PI_2, false);
+    context.fillStyle = style;
+    return context.fill();
+  };
+
+  xpos = 0.5;
+
+  document.onmousemove = function(e) {
+    return xpos = e.pageX / w;
+  };
+
+  window.requestAnimationFrame = (function() {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+      return window.setTimeout(callback, 1000 / 60);
     };
-    this.position = {
-        x: clickPosition[0],
-        y: clickPosition[1]
-    };
-    this.rotation = rand(0, 2 * Math.PI);
-    this.scale = { x: 1, y: 1 };
-    this.velocity = {
-        x: rand(-confettiParams.initSpeed, confettiParams.initSpeed) * 0.4,
-        y: rand(-confettiParams.initSpeed, confettiParams.initSpeed)
-    };
-    this.flipSpeed = rand(0.2, 1.5) * confettiParams.flipSpeed;
+  })();
 
-    if (this.position.y <= container.h) {
-        this.velocity.y = -Math.abs(this.velocity.y);
+  Confetti = class Confetti {
+    constructor() {
+      this.style = COLORS[~~range(0, 5)];
+      this.rgb = `rgba(${this.style[0]},${this.style[1]},${this.style[2]}`;
+      this.r = ~~range(2, 6);
+      this.r2 = 2 * this.r;
+      this.replace();
     }
 
-    this.terminalVelocity = rand(1, 1.5) * confettiParams.terminalVelocity;
-
-    this.update = function () {
-        this.velocity.x *= 0.98;
-        this.position.x += this.velocity.x;
-
-        this.velocity.y += (this.randomModifier * confettiParams.drag);
-        this.velocity.y += confettiParams.gravity;
-        this.velocity.y = Math.min(this.velocity.y, this.terminalVelocity);
-        this.position.y += this.velocity.y;
-
-        this.scale.y = Math.cos((this.position.y + this.randomModifier) * this.flipSpeed);
-        this.color = this.scale.y > 0 ? this.colorPair.front : this.colorPair.back;
+    replace() {
+      this.opacity = 0;
+      this.dop = 0.03 * range(1, 4);
+      this.x = range(-this.r2, w - this.r2);
+      this.y = range(-20, h - this.r2);
+      this.xmax = w - this.r;
+      this.ymax = h - this.r;
+      this.vx = range(0, 2) + 8 * xpos - 5;
+      return this.vy = 0.7 * this.r + range(-1, 1);
     }
-}
 
-function updateConfetti () {
-    confettiCtx.clearRect(0, 0, container.w, container.h);
-
-    confettiElements.forEach((c) => {
-        c.update();
-        confettiCtx.translate(c.position.x, c.position.y);
-        confettiCtx.rotate(c.rotation);
-        const width = (c.dimensions.x * c.scale.x);
-        const height = (c.dimensions.y * c.scale.y);
-        confettiCtx.fillStyle = c.color;
-        confettiCtx.fillRect(-0.5 * width, -0.5 * height, width, height);
-        confettiCtx.setTransform(1, 0, 0, 1, 0, 0)
-    });
-
-    confettiElements.forEach((c, idx) => {
-        if (c.position.y > container.h ||
-            c.position.x < -0.5 * container.x ||
-            c.position.x > 1.5 * container.x) {
-            confettiElements.splice(idx, 1)
-        }
-    });
-    window.requestAnimationFrame(updateConfetti);
-}
-
-function setupCanvas() {
-    container = {
-        w: confetti.clientWidth,
-        h: confetti.clientHeight
-    };
-    confetti.width = container.w;
-    confetti.height = container.h;
-}
-
-function addConfetti(e) {
-    const canvasBox = confetti.getBoundingClientRect();
-    if (e) {
-        clickPosition = [
-            e.clientX - canvasBox.left,
-            e.clientY - canvasBox.top
-        ];
-    } else {
-        clickPosition = [
-            canvasBox.width * Math.random(),
-            canvasBox.height * Math.random()
-        ];
+    draw() {
+      var ref;
+      this.x += this.vx;
+      this.y += this.vy;
+      this.opacity += this.dop;
+      if (this.opacity > 1) {
+        this.opacity = 1;
+        this.dop *= -1;
+      }
+      if (this.opacity < 0 || this.y > this.ymax) {
+        this.replace();
+      }
+      if (!((0 < (ref = this.x) && ref < this.xmax))) {
+        this.x = (this.x + this.xmax) % this.xmax;
+      }
+      return drawCircle(~~this.x, ~~this.y, this.r, `${this.rgb},${this.opacity})`);
     }
-    for (let i = 0; i < confettiParams.number; i++) {
-        confettiElements.push(new Conf())
+
+  };
+
+  confetti = (function() {
+    var j, ref, results;
+    results = [];
+    for (i = j = 1, ref = NUM_CONFETTI; (1 <= ref ? j <= ref : j >= ref); i = 1 <= ref ? ++j : --j) {
+      results.push(new Confetti);
     }
+    return results;
+  })();
+
+  window.step = function() {
+    var c, j, len, results;
+    requestAnimationFrame(step);
+    context.clearRect(0, 0, w, h);
+    results = [];
+    for (j = 0, len = confetti.length; j < len; j++) {
+      c = confetti[j];
+      results.push(c.draw());
+    }
+    return results;
+  };
+
+  step();
+
+}).call(this);
+function datachange(){
+  varfirsttime=true
 }
-
-function hideConfetti() {
-    confettiElements = [];
-    window.cancelAnimationFrame(updateConfetti)
+window.onload = function() {
+  document.getElementById("names").value = localStorage.getItem("mylastdata");
 }
-
-confettiLoop();
-function confettiLoop() {
-    addConfetti();
-    setTimeout(confettiLoop, 700 + Math.random() * 1700);
-}
-}
-
-function pickRandomTag() {
-	const tags = document.querySelectorAll('.tag');
-	return tags[Math.floor(Math.random() * tags.length)];
-}
-
-function highlightTag(tag) {
-	tag.classList.add('highlight');
-}
-
-function unhighlightTag(tag) {
-	tag.classList.remove('highlight');
-}
-
-// SOCIAL PANEL JS
-const floating_btn = document.querySelector('.floating-btn');
-const close_btn = document.querySelector('.close-btn');
-const social_panel_container = document.querySelector('.social-panel-container');
-
-floating_btn.addEventListener('click', () => {
-	social_panel_container.classList.toggle('visible')
-});
-
-close_btn.addEventListener('click', () => {
-	social_panel_container.classList.remove('visible')
-});
